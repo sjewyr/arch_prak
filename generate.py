@@ -157,6 +157,7 @@ def load_data_mongo_db(conn: psycopg.Connection, mdb: pymongo.synchronous.databa
 def main():
     conn = None
     neo_conn = None
+    client = None
     try:
         conf = generate_conf()
         conn = get_connection(conf.psql)
@@ -165,6 +166,9 @@ def main():
         db = client.test
         print(load_data_mongo_db(conn, db))
         print(load_data_neo4j(conn, neo_conn))
+        conn.close()
+        client.close()
+        neo_conn.close()
 
 
     except GeneratingException as e:
@@ -173,7 +177,10 @@ def main():
             conn.close()    
         if neo_conn:
             neo_conn.close()
+        if client:
+            client.close()
 
+    
 
 
 
