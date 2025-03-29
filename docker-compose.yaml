@@ -1,0 +1,64 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: redis_container
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data    
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_container
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongodbData:/data/db
+      - ./data/mongodbJournal:/data/journal
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${SERVICE_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${SERVICE_PASSWORD}
+    
+
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j_container
+    restart: on-failure
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    volumes:
+      - ./data/neo4j:/data
+   
+  elasticsearch:
+    image: elasticsearch:8.17.2
+    container_name: elasticsearch_container
+    restart: on-failure
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=password
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+
+  postgresql:
+    image: postgres:latest
+    container_name: postgresql_container
+    hostname: postgresql
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data  

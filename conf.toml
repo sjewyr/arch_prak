@@ -1,0 +1,13 @@
+[postgres]
+host = "127.0.0.1"
+port = "5432"
+user = "postgres"
+password = "postgres"
+database = "postgres"
+
+[neo4j]
+host = "127.0.0.1"
+port = "7687"
+user = "neo4j"
+password = "password"
+
