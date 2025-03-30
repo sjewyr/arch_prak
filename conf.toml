@@ -1,8 +1,8 @@
 [postgres]
 host = "127.0.0.1"
-port = "5432"
+port = "5234"
 user = "postgres"
-password = "postgres"
+password = "1234"
 database = "postgres"
 
 [neo4j]
@@ -11,3 +11,7 @@ port = "7687"
 user = "neo4j"
 password = "password"
 
+[redis]
+host = "127.0.0.1"
+port = "6379"
+db = "0"
