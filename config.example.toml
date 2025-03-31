@@ -20,3 +20,9 @@ db = "0"
 host = "127.0.0.1"
 port = 27017
 db = "test"
+
+
+[api]
+host = "127.0.0.1"
+port = 10000
+token_minutes = 5

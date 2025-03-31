@@ -1,0 +1,1 @@
+poetry run python generate.py && poetry run python main.py

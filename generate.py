@@ -1,4 +1,5 @@
 import logging
+import time
 import neo4j
 import pymongo.database
 import redis
@@ -169,8 +170,10 @@ def load_data_redis(conn: psycopg.Connection, redis_conn):
 def main(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver, db_mongo: pymongo.database.Database, redis_conn: redis.Redis):
     try:            
             load_data_mongo_db(conn, db_mongo)
-            load_data_neo4j(conn, neo_conn)
+            time.sleep(3)
             load_data_redis(conn, redis_conn)
+
+            load_data_neo4j(conn, neo_conn)
 
     except GeneratingException as e:
         logging.error(e.message())
@@ -178,6 +181,7 @@ def main(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver, db_mongo: pymong
 
 if __name__ == "__main__":
     conf = generate_conf()
+    time.sleep(3)
     with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
         with pymongo.MongoClient(conf.mongo['host'], conf.mongo['port']) as mongo_client:
             with neo4j.GraphDatabase.driver(conf.neo4j.get('uri'), auth=(conf.neo4j.get('user'), conf.neo4j.get('password'))) as neo_conn:
