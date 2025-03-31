@@ -1,11 +1,14 @@
 ## Запуск
 
+**Переименуйте файл config.example.toml в config.toml!**
+
 ```
    docker-compose up 
 ```
 
 ## Подгрузка данных
 
+**Переименуйте файл config.example.toml в config.toml!**  
 Установить poetry  
 Настроить conf.toml  
 ```
