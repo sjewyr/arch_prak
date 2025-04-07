@@ -9,13 +9,16 @@ import dynaconf
 import pymongo
 
 logging.basicConfig(level=logging.INFO)
+
+
 class GeneratingException(Exception):
     def __init__(self, text):
         self.text = text
 
     def message(self):
         return self.text
-    
+
+
 class ConfException(GeneratingException):
     def __init__(self, text):
         super().__init__(text)
@@ -30,21 +33,24 @@ class PostgreSQLException(GeneratingException):
 
     def message(self):
         return "Ошибка при подключении к PostgreSQL: " + super().message()
-    
+
+
 class Neo4jException(GeneratingException):
     def __init__(self, text):
         super().__init__(text)
 
     def message(self):
         return "Ошибка при загрузке в Neo4j: " + super().message()
-    
+
+
 class MongoDebilException(GeneratingException):
     def __init__(self, text):
         super().__init__(text)
 
     def message(self):
         return "Ошибка при загрузке в MongoDB: " + super().message()
-    
+
+
 class RediskaException(GeneratingException):
     def __init__(self, text):
         super().__init__(text)
@@ -54,7 +60,13 @@ class RediskaException(GeneratingException):
 
 
 class ConnInfos:
-    def __init__(self, psql_str: str, neo4j: dict[str, str], redis: dict[str, str], mongo: dict[str, str|int]):
+    def __init__(
+        self,
+        psql_str: str,
+        neo4j: dict[str, str],
+        redis: dict[str, str],
+        mongo: dict[str, str | int],
+    ):
         self.psql = psql_str
         self.neo4j = neo4j
         self.redis = redis
@@ -63,11 +75,19 @@ class ConnInfos:
 
 def generate_conf() -> ConnInfos:
     try:
-        conf = dynaconf.Dynaconf(settings_files=['config.toml',])
+        conf = dynaconf.Dynaconf(
+            settings_files=[
+                "config.toml",
+            ]
+        )
         conf.reload()
         conn_str = f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}"
         neo4j_conf = conf.neo4j
-        neo4j_info = {"uri": f"neo4j://{neo4j_conf.host}:{neo4j_conf.port}", "user": neo4j_conf.user, "password": neo4j_conf.password}
+        neo4j_info = {
+            "uri": f"neo4j://{neo4j_conf.host}:{neo4j_conf.port}",
+            "user": neo4j_conf.user,
+            "password": neo4j_conf.password,
+        }
         redis = {"host": conf.redis.host, "port": conf.redis.port, "db": conf.redis.db}
         mongo_conf = conf.mongo
         mongo = {"host": mongo_conf.host, "port": mongo_conf.port, "db": mongo_conf.db}
@@ -94,11 +114,20 @@ def load_data_neo4j(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver):
                 s.run("MATCH (n1:Group) DETACH DELETE n1;")
                 s.run("MATCH (n1:Lecture) DETACH DELETE n1;")
                 for lecture in lectures:
-                    s.run("CREATE (n1:Lecture {id_lect: $id_lect})", id_lect=lecture["id_lect"])
-                
+                    s.run(
+                        "CREATE (n1:Lecture {id_lect: $id_lect})",
+                        id_lect=lecture["id_lect"],
+                    )
+
                 for group in groups:
-                    s.run("CREATE (n1:Group {id_group: $id_group})", id_group=group["id_group"])
-                    cur.execute("SELECT id_lect, date FROM schedule_partitioned WHERE id_group=%s AND id_lect IS NOT NULL", (group["id_group"],))
+                    s.run(
+                        "CREATE (n1:Group {id_group: $id_group})",
+                        id_group=group["id_group"],
+                    )
+                    cur.execute(
+                        "SELECT id_lect, date FROM schedule_partitioned WHERE id_group=%s AND id_lect IS NOT NULL",
+                        (group["id_group"],),
+                    )
                     res = cur.fetchall()
                     query = """
                         MERGE (g:Group {id_group: $id_group})
@@ -113,13 +142,20 @@ def load_data_neo4j(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver):
                     g_id = stud["id_group"]
 
                     s.run("CREATE (n:Student {id_stud: $id})", id=s_id)
-                    s.run("MATCH (n:Student {id_stud: $id_stud}) MATCH (n1:Group {id_group: $id_group}) CREATE (n)-[r:InGroup]->(n1)", id_stud=s_id, id_group=g_id)
+                    s.run(
+                        "MATCH (n:Student {id_stud: $id_stud}) MATCH (n1:Group {id_group: $id_group}) CREATE (n)-[r:InGroup]->(n1)",
+                        id_stud=s_id,
+                        id_group=g_id,
+                    )
         logging.info("В Neo4j все записано.")
         return True
     except Exception as e:
         raise Neo4jException(str(e))
-    
-def load_data_mongo_db(conn: psycopg.Connection, mdb: pymongo.synchronous.database.Database):
+
+
+def load_data_mongo_db(
+    conn: psycopg.Connection, mdb: pymongo.synchronous.database.Database
+):
     try:
         m_uni: pymongo.collection.Collection = mdb.universities
         m_uni.drop()
@@ -127,13 +163,22 @@ def load_data_mongo_db(conn: psycopg.Connection, mdb: pymongo.synchronous.databa
             cur.execute("SELECT id_univ, name FROM universities")
             unis = cur.fetchall()
             for uni in unis:
-                cur.execute("SELECT id_inst, name FROM institutes WHERE id_univ = %s", (uni['id_univ'],))
+                cur.execute(
+                    "SELECT id_inst, name FROM institutes WHERE id_univ = %s",
+                    (uni["id_univ"],),
+                )
                 insts = cur.fetchall()
                 for inst in insts:
-                    cur.execute("SELECT id_depart, name FROM departments WHERE id_inst = %s", (inst["id_inst"],))
+                    cur.execute(
+                        "SELECT id_depart, name FROM departments WHERE id_inst = %s",
+                        (inst["id_inst"],),
+                    )
                     deps = cur.fetchall()
                     for dep in deps:
-                        cur.execute("SELECT id_group, name FROM groups WHERE id_depart = %s", (dep["id_depart"], ))
+                        cur.execute(
+                            "SELECT id_group, name FROM groups WHERE id_depart = %s",
+                            (dep["id_depart"],),
+                        )
                         groups = cur.fetchall()
                         dep["groups"] = groups
                     inst["departments"] = deps
@@ -157,34 +202,44 @@ def load_data_redis(conn: psycopg.Connection, redis_conn):
                     "id_group": student["id_group"],
                     "name": student["name"],
                     "studak": student["studak"],
-                    "age": student["age"]
+                    "age": student["age"],
                 }
                 redis_conn.hset(f"student:{student_id}", mapping=student_data)
-                
+
         logging.info("В Редиску все записано.")
     except Exception as e:
         raise RediskaException(str(e))
     return True
 
-    
-def main(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver, db_mongo: pymongo.database.Database, redis_conn: redis.Redis):
-    try:            
-            load_data_mongo_db(conn, db_mongo)
-            time.sleep(3)
-            load_data_redis(conn, redis_conn)
 
-            load_data_neo4j(conn, neo_conn)
+def main(
+    conn: psycopg.Connection,
+    neo_conn: neo4j.Neo4jDriver,
+    db_mongo: pymongo.database.Database,
+    redis_conn: redis.Redis,
+):
+    try:
+        load_data_mongo_db(conn, db_mongo)
+        time.sleep(3)
+        load_data_redis(conn, redis_conn)
+
+        load_data_neo4j(conn, neo_conn)
 
     except GeneratingException as e:
         logging.error(e.message())
-    
+
 
 if __name__ == "__main__":
     conf = generate_conf()
     time.sleep(3)
     with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
-        with pymongo.MongoClient(conf.mongo['host'], conf.mongo['port']) as mongo_client:
-            with neo4j.GraphDatabase.driver(conf.neo4j.get('uri'), auth=(conf.neo4j.get('user'), conf.neo4j.get('password'))) as neo_conn:
+        with pymongo.MongoClient(
+            conf.mongo["host"], conf.mongo["port"]
+        ) as mongo_client:
+            with neo4j.GraphDatabase.driver(
+                conf.neo4j.get("uri"),
+                auth=(conf.neo4j.get("user"), conf.neo4j.get("password")),
+            ) as neo_conn:
                 with redis.Redis(**conf.redis) as redis_conn:
-                    db = mongo_client[conf.mongo.get('db')]
+                    db = mongo_client[conf.mongo.get("db")]
                     main(conn, neo_conn, db, redis_conn)
