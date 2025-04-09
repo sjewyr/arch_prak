@@ -35,7 +35,7 @@ services:
       - ./data/neo4j:/data
    
   elasticsearch:
-    image: elasticsearch:8.17.2
+    image: bitnami/elasticsearch:8.17.0
     container_name: elasticsearch_container
     restart: on-failure
     environment:

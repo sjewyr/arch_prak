@@ -20,6 +20,7 @@ uvicorn = "^0.34.0"
 gunicorn = "^23.0.0"
 pyjwt = "^2.10.1"
 python-multipart = "^0.0.20"
+elasticsearch = "^8.17.0"
 
 
 [build-system]

@@ -1,4 +1,5 @@
 import logging
+import random
 import time
 import neo4j
 import pymongo.database
@@ -7,6 +8,8 @@ import psycopg
 from psycopg.rows import dict_row
 import dynaconf
 import pymongo
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 
 logging.basicConfig(level=logging.INFO)
 
@@ -58,6 +61,12 @@ class RediskaException(GeneratingException):
     def message(self):
         return "Ошибка при загрузке в Redis: " + super().message()
 
+class ElasticsearchException(GeneratingException):
+    def __init__(self, text):
+        super().__init__(text)
+
+    def message(self):
+        return "Ошибка при загрузке в Elasticsearch: " + super().message()
 
 class ConnInfos:
     def __init__(
@@ -66,11 +75,13 @@ class ConnInfos:
         neo4j: dict[str, str],
         redis: dict[str, str],
         mongo: dict[str, str | int],
+        elastic: dict[str, str | int]
     ):
         self.psql = psql_str
         self.neo4j = neo4j
         self.redis = redis
         self.mongo = mongo
+        self.elastic = elastic
 
 
 def generate_conf() -> ConnInfos:
@@ -91,8 +102,10 @@ def generate_conf() -> ConnInfos:
         redis = {"host": conf.redis.host, "port": conf.redis.port, "db": conf.redis.db}
         mongo_conf = conf.mongo
         mongo = {"host": mongo_conf.host, "port": mongo_conf.port, "db": mongo_conf.db}
+        elastic_conf = conf.elasticsearch
+        elastic = {"host": elastic_conf.host, "port": elastic_conf.port}
 
-        conn_info = ConnInfos(conn_str, neo4j_info, redis, mongo)
+        conn_info = ConnInfos(conn_str, neo4j_info, redis, mongo, elastic)
         logging.info("Конфиг загружен")
 
         return conn_info
@@ -211,18 +224,100 @@ def load_data_redis(conn: psycopg.Connection, redis_conn):
         raise RediskaException(str(e))
     return True
 
+academic_verbs = [
+    "анализируется", "рассматривается", "исследуется", "выявляется",
+    "определяется", "оценивается", "обосновывается", "моделируется",
+    "структурируется", "проецируется", "интерпретируется"
+]
+
+subjects = [
+    "когнитивная природа сознания", "историческая ретроспектива модерна",
+    "функционирование социальных институтов", "гносеологические аспекты восприятия",
+    "онтология языка", "структура математической абстракции",
+    "динамика культурных трансформаций", "семантика знаковых систем",
+    "сравнительный анализ методологических подходов", "эволюция научной парадигмы"
+]
+
+fancy_nouns = [
+    "когнитивный дискурс", "эпистемологическая платформа", "трансцендентальная модель",
+    "метаязык мышления", "парадигма постструктурализма", "онтологический модус",
+    "интерсубъективная картина", "дедуктивная конструкция", "аксиоматическая система"
+]
+
+adjectives = [
+    "глубокий", "детальный", "комплексный", "спорный", "многоаспектный",
+    "парадоксальный", "всесторонний", "противоречивый", "инновационный"
+]
+
+def generate_random_paragraph():
+    paragraph = []
+    for _ in range(random.randint(4, 6)):
+        subject = random.choice(subjects)
+        verb = random.choice(academic_verbs)
+        noun = random.choice(fancy_nouns)
+        adj = random.choice(adjectives)
+
+        sentence = (
+            f"В рамках данной части лекции {verb} {subject}, где особое внимание уделяется такому явлению, как {adj} {noun}. "
+            f"Этот подход позволяет расширить представление о теме за счёт включения междисциплинарных связей и критического анализа."
+        )
+        paragraph.append(sentence)
+    return " ".join(paragraph)
+
+def generate_description():
+    body = generate_random_paragraph()
+    outro = random.choice([
+        "В результате рассмотрения слушатель получает новый взгляд на предмет.",
+        "Такой анализ создаёт фундамент для дальнейших размышлений.",
+        "Таким образом, создаётся концептуальная база для более глубокого осмысления.",
+        "Подобный подход обеспечивает целостное понимание изучаемых процессов.",
+        "Итогом лекции становится расширение границ привычного восприятия темы."
+    ])
+    return f"{body} {outro}"
+
+def load_data_elasticsearch(conn, elastic_conn):
+    try:
+        index_name = "lectures_text"
+        if not elastic_conn.indices.exists(index=index_name):
+            elastic_conn.indices.create(index=index_name)
+
+        with conn.cursor() as cur:
+            cur.execute("SELECT id_lect FROM lectures")
+            lectures = cur.fetchall()
+
+            actions = []
+            for lecture in lectures:
+                lect_id = lecture["id_lect"]
+                doc = {
+                    "_index": index_name,
+                    "_id": lect_id,
+                    "id_lect": lect_id,
+                    "description": generate_description()
+                }
+                actions.append(doc)
+
+            if actions:
+                bulk(elastic_conn, actions)
+
+        logging.info("В Elasticsearch все записано.")
+        return True
+    except Exception as e:
+        raise ElasticsearchException(str(e))
+
+
 
 def main(
     conn: psycopg.Connection,
     neo_conn: neo4j.Neo4jDriver,
     db_mongo: pymongo.database.Database,
     redis_conn: redis.Redis,
+    elastic_conn: Elasticsearch
 ):
     try:
         load_data_mongo_db(conn, db_mongo)
         time.sleep(3)
         load_data_redis(conn, redis_conn)
-
+        load_data_elasticsearch(conn, elastic_conn)
         load_data_neo4j(conn, neo_conn)
 
     except GeneratingException as e:
@@ -241,5 +336,6 @@ if __name__ == "__main__":
                 auth=(conf.neo4j.get("user"), conf.neo4j.get("password")),
             ) as neo_conn:
                 with redis.Redis(**conf.redis) as redis_conn:
+                    elastic_conn = Elasticsearch(f"http://{conf.elastic['host']}:{conf.elastic['port']}") 
                     db = mongo_client[conf.mongo.get("db")]
-                    main(conn, neo_conn, db, redis_conn)
+                    main(conn, neo_conn, db, redis_conn, elastic_conn)

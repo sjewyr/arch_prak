@@ -3,7 +3,7 @@ from neo4j import Neo4jDriver
 from psycopg import Cursor
 from pymongo import MongoClient
 from redis import Redis
-
+from elasticsearch import Elasticsearch
 
 def get_pg_conn(request: Request) -> Cursor:  # type: ignore
     with request.app.state.pg_conn.cursor() as cur:
@@ -20,3 +20,6 @@ def get_mongo_client(request: Request) -> MongoClient:
 
 def get_neo_conn(request: Request) -> Neo4jDriver:
     return request.app.state.neo_conn
+
+def get_elastic_conn(request: Request) -> Elasticsearch:
+    return request.app.state.elastic_conn

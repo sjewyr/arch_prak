@@ -8,6 +8,7 @@ from neo4j import GraphDatabase
 import psycopg
 from pymongo import MongoClient
 from redis import Redis
+from elasticsearch import Elasticsearch
 import uvicorn
 from api.pres.rest.login import login_router
 from api.pres.rest.lab1 import first_router
@@ -37,6 +38,11 @@ def finalizer(app: FastAPI):
     except Exception as e:
         logging.error(f"Failed to close postgres connection: {str(e)}")
 
+    try:
+        app.state.elastic_conn.close()
+    except Exception as e:
+        logging.error(f"Failed to close elasticsearch connection: {str(e)}")
+
 
 class Config:
     def __init__(self, valid):
@@ -65,11 +71,13 @@ if __name__ == "__main__":
     mongo_conn = MongoClient(conf.mongo["host"], conf.mongo["port"])
     redis_conf = {"host": conf.redis.host, "port": conf.redis.port, "db": conf.redis.db}
     redis_conn = Redis(**redis_conf)
+    elastic_conn = Elasticsearch(f"http://{conf.elasticsearch.host}:{conf.elasticsearch.port}")
 
     app.state.pg_conn = postgres_conn
     app.state.neo_conn = neo4j_conn
     app.state.mongo_client = mongo_conn
     app.state.redis_conn = redis_conn
+    app.state.elastic_conn = elastic_conn
 
     app.include_router(login_router, prefix="/login")
     app.include_router(first_router, prefix="/first")

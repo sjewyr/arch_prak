@@ -6,6 +6,7 @@ from api.app.dependencies import (
     get_neo_conn,
     get_pg_conn,
     get_redis_conn,
+    get_elastic_conn
 )
 from api.app.login_middleware import login_middleware
 from starlette import status
@@ -30,7 +31,7 @@ def least_attendance(
     redis_conn=Depends(get_redis_conn),
     neo4j_conn=Depends(get_neo_conn),
     mongo_conn=Depends(get_mongo_client),
-    elastic=None,  # DIMA (nado bi nam elastic)
+    elastic_conn=Depends(get_elastic_conn)  # YA ZDELAL VRODE
 ):
     res = least_attendance_usecase(
         date_start,
@@ -40,7 +41,7 @@ def least_attendance(
         redis_conn,
         neo4j_conn,
         mongo_conn,
-        elastic,
+        elastic_conn
     )
     return JSONResponse(
         "Пока ничево не готово (кринж)", status=status.HTTP_501_NOT_IMPLEMENTED
