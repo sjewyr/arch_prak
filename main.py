@@ -17,30 +17,22 @@ from api.pres.rest.lab1 import first_router
 async def finalizer(app: FastAPI):
     yield
 
-    try:
-        app.state.pg_conn.close()
-    except Exception as e:
-        logging.error(f"Failed to close postgres connection: {str(e)}")
+    connections = [
+        ('pg_conn', 'postgres'),
+        ('neo_conn', 'neo4j'),
+        ('mongo_client', 'mongodb'),
+        ('redis_conn', 'redis'),
+        ('elastic_conn', 'elasticsearch')
+    ]
 
-    try:
-        app.state.neo_conn.close()
-    except Exception as e:
-        logging.error(f"Failed to close neo4j connection: {str(e)}")
-
-    try:
-        app.state.mongo_client.close()
-    except Exception as e:
-        logging.error(f"Failed to close mongodebil connection: {str(e)}")
-
-    try:
-        app.state.redis_conn.close()
-    except Exception as e:
-        logging.error(f"Failed to close postgres connection: {str(e)}")
-
-    try:
-        app.state.elastic_conn.close()
-    except Exception as e:
-        logging.error(f"Failed to close elasticsearch connection: {str(e)}")
+    for attr, name in connections:
+        try:
+            if hasattr(app.state, attr):
+                conn = getattr(app.state, attr)
+                if conn:
+                    conn.close()
+        except Exception as e:
+            logging.error(f"Failed to close {name} connection: {str(e)}")
 
 class Config:
     def __init__(self, valid):
