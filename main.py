@@ -15,7 +15,7 @@ from api.pres.rest.lab1 import first_router
 
 
 @asynccontextmanager
-def finalizer(app: FastAPI):
+async def finalizer(app: FastAPI):
     yield
 
     try:
