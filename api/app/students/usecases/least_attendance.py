@@ -41,16 +41,17 @@ def least_attendance_usecase(
     
     result.sort(key=lambda x: x[1])
     least_attendance = result[:10]
-    ids = [l[0] for l in least_attendance]
     redis_rep = RedisRepo(redis_conn)
 
-    infos = [redis_rep.get_student_by_id(id_) for id_ in ids]
-    result = []
+    infos = [redis_rep.get_student_by_id(id_, percent) for id_, percent in least_attendance]
+    result = {"students": []}
     for d in infos:
         temp = {}
         for k,v in d.items():
             temp[k.decode()] = v.decode()
-        result.append(temp)
+            
+        result['students'].append(temp)
+        
             
     return result
 

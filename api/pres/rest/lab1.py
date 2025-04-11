@@ -43,6 +43,9 @@ def least_attendance(
         mongo_conn,
         elastic_conn
     )
+    res['start_date'] = date_start.isoformat()
+    res['end_date'] = date_end.isoformat()
+    res['termin'] = termin
     return JSONResponse(
         res, status_code=status.HTTP_200_OK
     )
