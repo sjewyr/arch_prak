@@ -6,11 +6,12 @@ ENV POETRY_VERSION=1.8.3 \
     POETRY_HOME='/usr/local' \
     PYTHONPATH='/app'
 
+
+VOLUME /app
+
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock* ./
-
-VOLUME /app
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN poetry install --no-interaction --no-root
