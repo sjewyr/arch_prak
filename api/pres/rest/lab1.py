@@ -44,5 +44,5 @@ def least_attendance(
         elastic_conn
     )
     return JSONResponse(
-        "Пока ничево не готово (кринж)", status=status.HTTP_501_NOT_IMPLEMENTED
+        res, status_code=status.HTTP_200_OK
     )

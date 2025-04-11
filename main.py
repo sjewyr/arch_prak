@@ -15,6 +15,22 @@ from api.pres.rest.lab1 import first_router
 
 @asynccontextmanager
 async def finalizer(app: FastAPI):
+    neo4j_conf = conf.neo4j
+    app.state.pg_conn = psycopg.connect(
+        f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
+        row_factory=dict_row,
+    )
+    app.state.neo_conn = GraphDatabase.driver(
+        f"neo4j://{neo4j_conf.host}:{neo4j_conf.port}",
+        auth=(neo4j_conf.user, neo4j_conf.password),
+    )
+    app.state.mongo_client = MongoClient(conf.mongo["host"], conf.mongo["port"])
+    redis_conf = {"host": conf.redis.host, "port": conf.redis.port, "db": conf.redis.db}
+    app.state.redis_conn = Redis(**redis_conf)
+    app.state.elastic_conn = Elasticsearch(f"http://{conf.elasticsearch.host}:{conf.elasticsearch.port}")
+
+    app.include_router(login_router, prefix="/login")
+    app.include_router(first_router, prefix="/first")
     yield
 
     connections = [
@@ -42,26 +58,6 @@ class Config:
 conf = Dynaconf(settings_files=["config.toml"])
 app = FastAPI(lifespan=finalizer)
 app.state.config = Config(valid=conf.api.token_minutes)
-
-
-@app.on_event("startup")
-async def startup():
-    neo4j_conf = conf.neo4j
-    app.state.pg_conn = psycopg.connect(
-        f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
-        row_factory=dict_row,
-    )
-    app.state.neo_conn = GraphDatabase.driver(
-        f"neo4j://{neo4j_conf.host}:{neo4j_conf.port}",
-        auth=(neo4j_conf.user, neo4j_conf.password),
-    )
-    app.state.mongo_client = MongoClient(conf.mongo["host"], conf.mongo["port"])
-    redis_conf = {"host": conf.redis.host, "port": conf.redis.port, "db": conf.redis.db}
-    app.state.redis_conn = Redis(**redis_conf)
-    app.state.elastic_conn = Elasticsearch(f"http://{conf.elasticsearch.host}:{conf.elasticsearch.port}")
-
-    app.include_router(login_router, prefix="/login")
-    app.include_router(first_router, prefix="/first")
 
 
 

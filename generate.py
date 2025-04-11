@@ -138,7 +138,7 @@ def load_data_neo4j(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver):
                         id_group=group["id_group"],
                     )
                     cur.execute(
-                        "SELECT id_lect, date FROM schedule_partitioned WHERE id_group=%s AND id_lect IS NOT NULL",
+                        "SELECT id_sched, id_lect, date FROM schedule_partitioned WHERE id_group=%s AND id_lect IS NOT NULL",
                         (group["id_group"],),
                     )
                     res = cur.fetchall()
@@ -147,7 +147,7 @@ def load_data_neo4j(conn: psycopg.Connection, neo_conn: neo4j.Neo4jDriver):
                         WITH g
                         UNWIND $lectures AS lect
                         MERGE (l:Lecture {id_lect: lect.id_lect})
-                        CREATE (g)-[:HAS_ATTENDANCE {date: lect.date}]->(l)
+                        CREATE (g)-[:HAS_ATTENDANCE {date: lect.date, id_sched:lect.id_sched}]->(l)
                     """
                     s.run(query, lectures=res, id_group=group["id_group"])
                 for stud in students:
@@ -326,7 +326,7 @@ def main(
 
 if __name__ == "__main__":
     conf = generate_conf()
-    time.sleep(3)
+    time.sleep(5)
     with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
         with pymongo.MongoClient(
             conf.mongo["host"], conf.mongo["port"]
