@@ -64,11 +64,16 @@ services:
   
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: api
     ports:
       - "80:10000"
-    command: "bash startup.sh"
+    volumes:
+      - ./:/app
+    environment:
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
       - postgresql
