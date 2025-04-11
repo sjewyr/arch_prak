@@ -59,9 +59,8 @@ if __name__ == "__main__":
     app.state.config = Config(valid=conf.api.token_minutes)
 
     neo4j_conf = conf.neo4j
-
     postgres_conn = psycopg.connect(
-        "postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
+        f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
         row_factory=dict_row,
     )
     neo4j_conn = GraphDatabase.driver(
