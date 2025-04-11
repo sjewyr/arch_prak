@@ -1,32 +1,31 @@
 [postgres]
-host = "127.0.0.1"
+host = "postgresql_container"
 port = "5432"
 user = "postgres"
-password = "1234"
+password = "postgres"
 database = "postgres"
 
 [neo4j]
-host = "127.0.0.1"
+host = "neo4j_container"
 port = "7687"
 user = "neo4j"
 password = "password"
 
 [redis]
-host = "127.0.0.1"
+host = "redis_container"
 port = "6379"
 db = "0"
 
 [mongo]
-host = "127.0.0.1"
+host = "mongodb_container"
 port = 27017
 db = "test"
 
-[elasticsearch]
-host = "127.0.0.1"
-port = 9200
-
-
 [api]
-host = "127.0.0.1"
+host = "api"
 port = 10000
 token_minutes = 5
+
+[elasticsearch]
+host = "elasticsearch_container"
+port = 9200
