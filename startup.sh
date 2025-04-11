@@ -1,1 +1,1 @@
-poetry run python generate.py && uvicorn main:app --host 0.0.0.0 --port 10000 --reload
+sleep 15 && poetry run python generate.py && uvicorn main:app --host 0.0.0.0 --port 10000 --reload
