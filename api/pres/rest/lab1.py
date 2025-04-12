@@ -17,11 +17,6 @@ from api.app.students.usecases.least_attendance import least_attendance_usecase
 first_router = APIRouter(dependencies=[Depends(login_middleware)])
 
 
-@first_router.get("/echo")
-def echo(sex):
-    return sex
-
-
 @first_router.get("/least_attendance")
 def least_attendance(
     date_start: date,

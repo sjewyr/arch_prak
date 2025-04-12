@@ -20,3 +20,26 @@ class PostgresRepo:
         for d in res:
             res_[d["id_stud"]] = d["count"]
         return res_
+    
+    def get_discipline_by_name(self, name:str):
+        res = self.conn.execute("SELECT * FROM disciplines WHERE name = %s", (name,))
+        return res.fetchone()
+    
+    def get_lectures_by_discipline_id(self, d_id: int):
+        res = self.conn.execute("SELECT * FROM lectures WHERE id_disc = %s", (d_id,))
+        return res.fetchall()
+    
+    def get_cafedralic_lectures_by_group_name(self, name: str):
+        res = self.conn.execute("SELECT * FROM lectures WHERE id_disc IN (SELECT id_disc FROM disciplines WHERE id_depart = (SELECT id_depart FROM groups WHERE name = %s))", (name,))
+
+        return res.fetchall()
+    
+    def get_group_id_by_name(self, name: str):
+        res = self.conn.execute("SELECT id_group FROM groups WHERE name = %s", (name,))
+
+        return res.fetchone()['id_group']
+    
+    def get_cafedralic_disciplines(self, name:str):
+        res = self.conn.execute("(SELECT name FROM disciplines WHERE id_depart = (SELECT id_depart FROM groups WHERE name = %s))", (name,))
+
+        return res.fetchall()

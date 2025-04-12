@@ -16,7 +16,7 @@ def least_attendance_usecase(
     neo4j_conn,
     mongo_conn,
     elastic,
-) -> List[Any]:
+) -> dict[str, str]:
     elastic_rep = ElasticRepo(elastic)
     lectures_ids = elastic_rep.get_lectures_ids_by_termin(termin)
     neo_rep = NeoRepo(neo4j_conn)

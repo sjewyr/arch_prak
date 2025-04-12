@@ -10,3 +10,4 @@ class ElasticRepo:
             print([result["_source"]["id_lect"] for result in res['hits']['hits']])
             return [result["_source"]["id_lect"] for result in res['hits']['hits']]
         return []
+    

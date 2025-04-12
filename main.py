@@ -10,6 +10,8 @@ from redis import Redis
 from elasticsearch import Elasticsearch
 from api.pres.rest.login import login_router
 from api.pres.rest.lab1 import first_router
+from api.pres.rest.lab2 import second_router
+from api.pres.rest.lab3 import third_router
 
 
 
@@ -29,8 +31,10 @@ async def finalizer(app: FastAPI):
     app.state.redis_conn = Redis(**redis_conf)
     app.state.elastic_conn = Elasticsearch(f"http://{conf.elasticsearch.host}:{conf.elasticsearch.port}")
 
-    app.include_router(login_router, prefix="/login")
-    app.include_router(first_router, prefix="/first")
+    app.include_router(login_router, prefix="/login", tags=["LOGIN"])
+    app.include_router(first_router, prefix="/first", tags=["LAB 1"])
+    app.include_router(second_router, prefix="/second", tags=["LAB 2"])
+    app.include_router(third_router, prefix="/third", tags=["LAB 3"])
     yield
 
     connections = [
