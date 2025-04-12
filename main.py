@@ -13,8 +13,6 @@ from api.pres.rest.lab1 import first_router
 from api.pres.rest.lab2 import second_router
 from api.pres.rest.lab3 import third_router
 
-
-
 @asynccontextmanager
 async def finalizer(app: FastAPI):
     neo4j_conf = conf.neo4j
@@ -62,8 +60,6 @@ class Config:
 conf = Dynaconf(settings_files=["config.toml"])
 app = FastAPI(lifespan=finalizer)
 app.state.config = Config(valid=conf.api.token_minutes)
-
-
 
 if __name__ == "__main__":
     import uvicorn
