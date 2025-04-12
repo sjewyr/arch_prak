@@ -63,6 +63,17 @@ services:
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
       - ./FINISH.sql:/FINISH.sql
+
+
+  pgadmin:
+    image: elestio/pgadmin:latest
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
   
 
   api:
@@ -76,6 +87,7 @@ services:
       - ./:/app
     environment:
       - PYTHONUNBUFFERED=1
+      - NEED_DATA_SYNC=0
     restart: unless-stopped
     depends_on:
       - postgresql

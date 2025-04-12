@@ -5,6 +5,7 @@ import neo4j
 import pymongo.database
 import redis
 import psycopg
+import os
 from psycopg.rows import dict_row
 import dynaconf
 import pymongo
@@ -325,17 +326,18 @@ def main(
 
 
 if __name__ == "__main__":
-    conf = generate_conf()
-    time.sleep(5)
-    with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
-        with pymongo.MongoClient(
-            conf.mongo["host"], conf.mongo["port"]
-        ) as mongo_client:
-            with neo4j.GraphDatabase.driver(
-                conf.neo4j.get("uri"),
-                auth=(conf.neo4j.get("user"), conf.neo4j.get("password")),
-            ) as neo_conn:
-                with redis.Redis(**conf.redis) as redis_conn:
-                    elastic_conn = Elasticsearch(f"http://{conf.elastic['host']}:{conf.elastic['port']}") 
-                    db = mongo_client[conf.mongo.get("db")]
-                    main(conn, neo_conn, db, redis_conn, elastic_conn)
+    if os.getenv("NEED_DATA_SYNC", "1"):
+        conf = generate_conf()
+        time.sleep(5)
+        with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
+            with pymongo.MongoClient(
+                conf.mongo["host"], conf.mongo["port"]
+            ) as mongo_client:
+                with neo4j.GraphDatabase.driver(
+                    conf.neo4j.get("uri"),
+                    auth=(conf.neo4j.get("user"), conf.neo4j.get("password")),
+                ) as neo_conn:
+                    with redis.Redis(**conf.redis) as redis_conn:
+                        elastic_conn = Elasticsearch(f"http://{conf.elastic['host']}:{conf.elastic['port']}") 
+                        db = mongo_client[conf.mongo.get("db")]
+                        main(conn, neo_conn, db, redis_conn, elastic_conn)
