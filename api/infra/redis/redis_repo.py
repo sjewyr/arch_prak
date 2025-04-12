@@ -7,8 +7,8 @@ class RedisRepo:
 
     def get_student_by_id(self, id, percent=None, attendance=None):
         res = self.conn.hgetall(f"student:{id}")
-        if percent:
+        if percent is not None:
             res['percent'.encode()] = str(percent).encode()
-        if attendance:
+        if attendance is not None:
             res['attended_hours'.encode()] = str(attendance*2).encode()
         return res

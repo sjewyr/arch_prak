@@ -24,7 +24,7 @@ db = "test"
 [api]
 host = "api"
 port = 10000
-token_minutes = 5
+token_minutes = 90
 
 [elasticsearch]
 host = "elasticsearch_container"

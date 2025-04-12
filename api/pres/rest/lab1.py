@@ -26,7 +26,7 @@ def least_attendance(
     redis_conn=Depends(get_redis_conn),
     neo4j_conn=Depends(get_neo_conn),
     mongo_conn=Depends(get_mongo_client),
-    elastic_conn=Depends(get_elastic_conn)  # YA ZDELAL VRODE
+    elastic_conn=Depends(get_elastic_conn)
 ):
     res = least_attendance_usecase(
         date_start,
