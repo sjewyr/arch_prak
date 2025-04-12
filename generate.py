@@ -326,7 +326,7 @@ def main(
 
 
 if __name__ == "__main__":
-    if os.getenv("NEED_DATA_SYNC", "1"):
+    if os.getenv("NEED_DATA_SYNC") == "1":
         conf = generate_conf()
         time.sleep(5)
         with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
