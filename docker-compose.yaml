@@ -75,6 +75,24 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
   
+  apigateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apigateway
+    ports:
+      - "80:10000"
+    volumes:
+      - ./:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - neo4j
+      - redis
+      - elasticsearch
+      - mongodb
 
   api:
     build:
@@ -87,7 +105,7 @@ services:
       - ./:/app
     environment:
       - PYTHONUNBUFFERED=1
-      - NEED_DATA_SYNC=0
+      - NEED_DATA_SYNC=1
     restart: unless-stopped
     depends_on:
       - postgresql
