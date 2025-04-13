@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "proektirovan"
+version = "0.1.0"
+description = ""
+authors = ["sjewyr <ganshin.2004@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ruff = "^0.11.2"
+neo4j = "^5.28.1"
+psycopg = {extras = ["binary"], version = "^3.2.6"}
+python-dotenv = "^1.1.0"
+dynaconf = "^3.2.10"
+pymongo = "^4.11.3"
+redis = "^5.2.1"
+elasticsearch = "^8.17.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

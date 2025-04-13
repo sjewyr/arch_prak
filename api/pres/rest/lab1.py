@@ -1,20 +1,19 @@
 from datetime import date
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from api.app.dependencies import (
+from app.dependencies import (
     get_mongo_client,
     get_neo_conn,
     get_pg_conn,
     get_redis_conn,
     get_elastic_conn
 )
-from api.app.login_middleware import login_middleware
 from starlette import status
 
-from api.app.students.usecases.least_attendance import least_attendance_usecase
+from app.students.usecases.least_attendance import least_attendance_usecase
 
 
-first_router = APIRouter(dependencies=[Depends(login_middleware)])
+first_router = APIRouter()
 
 
 @first_router.get("/least_attendance")

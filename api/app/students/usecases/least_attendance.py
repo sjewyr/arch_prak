@@ -1,10 +1,9 @@
 from datetime import date
-from typing import Any, List
 
-from api.infra.elastic.elastic_repo import ElasticRepo
-from api.infra.neo4j.neo_repo import NeoRepo
-from api.infra.postgres.postgres_repo import PostgresRepo
-from api.infra.redis.redis_repo import RedisRepo
+from infra.elastic.elastic_repo import ElasticRepo
+from infra.neo4j.neo_repo import NeoRepo
+from infra.postgres.postgres_repo import PostgresRepo
+from infra.redis.redis_repo import RedisRepo
 
 
 def least_attendance_usecase(

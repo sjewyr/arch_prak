@@ -1,0 +1,26 @@
+[postgres]
+host = "postgresql_container"
+port = "5432"
+user = "postgres"
+password = "postgres"
+database = "postgres"
+
+[neo4j]
+host = "neo4j_container"
+port = "7687"
+user = "neo4j"
+password = "password"
+
+[redis]
+host = "redis_container"
+port = "6379"
+db = "0"
+
+[mongo]
+host = "mongodb_container"
+port = 27017
+db = "test"
+
+[elasticsearch]
+host = "elasticsearch_container"
+port = 9200

@@ -1,7 +1,6 @@
 import datetime
 import jwt
 from fastapi import HTTPException, Request
-from api.infra.token.tokenizer import decode_token
 
 
 def login_middleware(request: Request):

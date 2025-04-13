@@ -1,6 +1,6 @@
-from api.infra.neo4j.neo_repo import NeoRepo
-from api.infra.postgres.postgres_repo import PostgresRepo
-from api.infra.redis.redis_repo import RedisRepo
+from infra.neo4j.neo_repo import NeoRepo
+from infra.postgres.postgres_repo import PostgresRepo
+from infra.redis.redis_repo import RedisRepo
 
 
 def group_details_usecase(

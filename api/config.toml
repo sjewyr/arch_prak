@@ -21,11 +21,6 @@ host = "mongodb_container"
 port = 27017
 db = "test"
 
-[api]
-host = "api"
-port = 10000
-token_minutes = 90
-
 [elasticsearch]
 host = "elasticsearch_container"
 port = 9200

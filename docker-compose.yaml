@@ -59,11 +59,9 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
-      - ./data/postgresql:/var/lib/postgresql/data
-      - ./FINISH.sql:/FINISH.sql
-
+      - ./data/postgresql:/var/lib/postgresql/data 
 
   pgadmin:
     image: elestio/pgadmin:latest
@@ -75,38 +73,51 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
   
-  apigateway:
+
+  gateway:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: apigateway
+      dockerfile: Dockerfile.Gateway
+    container_name: gateway
     ports:
       - "80:10000"
     volumes:
-      - ./:/app
+      - ./gateway:/gateway
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-      - postgresql
-      - neo4j
-      - redis
-      - elasticsearch
-      - mongodb
+    - api
 
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.Api
     container_name: api
     ports:
-      - "80:10000"
+      - "10000"
     volumes:
-      - ./:/app
+      - ./api:/api
     environment:
       - PYTHONUNBUFFERED=1
-      - NEED_DATA_SYNC=1
     restart: unless-stopped
+    depends_on:
+      - sync
+      
+  sync:
+    build:
+      context: .
+      dockerfile: Dockerfile.Sync
+    container_name: sync
+    ports:
+      - "82:10000"
+    volumes:
+      - ./sync:/sync
+      - ./FINISH.sql:/FINISH.sql
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CREATE_DATA=1
+    restart: "no"
     depends_on:
       - postgresql
       - neo4j

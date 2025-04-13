@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "proektirovan"
+version = "0.1.0"
+description = ""
+authors = ["vovcha <vovcha5854@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ruff = "^0.11.2"
+python-dotenv = "^1.1.0"
+dynaconf = "^3.2.10"
+fastapi = "^0.115.12"
+pydantic = "^2.11.1"
+uvicorn = "^0.34.0"
+gunicorn = "^23.0.0"
+pyjwt = "^2.10.1"
+python-multipart = "^0.0.20"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

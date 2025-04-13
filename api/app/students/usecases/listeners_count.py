@@ -1,5 +1,5 @@
-from api.infra.neo4j.neo_repo import NeoRepo
-from api.infra.postgres.postgres_repo import PostgresRepo
+from infra.neo4j.neo_repo import NeoRepo
+from infra.postgres.postgres_repo import PostgresRepo
 
 
 def listeners_count_usecase(

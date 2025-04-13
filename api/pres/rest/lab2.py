@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-from api.app.dependencies import get_elastic_conn, get_mongo_client, get_neo_conn, get_pg_conn, get_redis_conn
-from api.app.login_middleware import login_middleware
-from api.app.students.usecases.listeners_count import listeners_count_usecase
+from app.dependencies import get_elastic_conn, get_mongo_client, get_neo_conn, get_pg_conn, get_redis_conn
+from app.students.usecases.listeners_count import listeners_count_usecase
 
 from starlette import status
 
 
-second_router = APIRouter(dependencies=[Depends(login_middleware)])
+second_router = APIRouter()
 
 @second_router.get("/listeners_count")
 def listeners_count(name: str,

@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from api.app.dependencies import get_elastic_conn, get_mongo_client, get_neo_conn, get_pg_conn, get_redis_conn
-from api.app.login_middleware import login_middleware
-from api.app.students.usecases.group_details import group_details_usecase
+from app.dependencies import get_elastic_conn, get_mongo_client, get_neo_conn, get_pg_conn, get_redis_conn
+from app.students.usecases.group_details import group_details_usecase
 from starlette import status
 
 
-third_router = APIRouter(dependencies=[Depends(login_middleware)])
+third_router = APIRouter()
 
 @third_router.get("/group_details")
 def group_details(name: str,
