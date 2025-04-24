@@ -58,19 +58,41 @@ def lab1(
 
 @router.get("/second")
 def lab2(
-    smth
+    name: str,
+    year: int
 ):
-    #обращаемся к 2 лабе
-    return JSONResponse(
-        "1", status_code=status.HTTP_200_OK
-    )
+    
+    params = {
+        "name": name,
+        "year": year
+    }
+
+    try:
+        response = requests.get(f"http://api:10000/listeners_count", params=params)
+        response.raise_for_status()
+        return JSONResponse(response.json(), status_code=200)
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка при запросе к listeners_count: {str(e)}"
+        )
+
 
 
 @router.get("/third")
 def lab3(
-    smth
+    name: str
 ):
-    #обращаемся к 3 лабе
-    return JSONResponse(
-        "1", status_code=status.HTTP_200_OK
-    )
+    params = {
+        "name": name
+    }
+
+    try:
+        response = requests.get(f"http://api:10000/group_details", params=params)
+        response.raise_for_status()
+        return JSONResponse(response.json(), status_code=200)
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка при запросе к listeners_count: {str(e)}"
+        )

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from psycopg.rows import dict_row
 from neo4j import GraphDatabase
 import psycopg
+import time
 from pymongo import MongoClient
 from redis import Redis
 from elasticsearch import Elasticsearch
@@ -15,6 +16,7 @@ from pres.rest.lab3 import third_router
 @asynccontextmanager
 async def finalizer(app: FastAPI):
     neo4j_conf = conf.neo4j
+    time.sleep(5)
     app.state.pg_conn = psycopg.connect(
         f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
         row_factory=dict_row,

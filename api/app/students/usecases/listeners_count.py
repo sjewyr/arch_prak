@@ -4,6 +4,7 @@ from infra.postgres.postgres_repo import PostgresRepo
 
 def listeners_count_usecase(
     name: str,
+    year: int,
     postgres_conn,
     redis_conn,
     neo4j_conn,
