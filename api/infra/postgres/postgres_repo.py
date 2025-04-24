@@ -25,8 +25,10 @@ class PostgresRepo:
         res = self.conn.execute("SELECT * FROM disciplines WHERE name = %s", (name,))
         return res.fetchone()
     
-    def get_lectures_by_discipline_id(self, d_id: int):
-        res = self.conn.execute("SELECT * FROM lectures WHERE id_disc = %s", (d_id,))
+    def get_lectures_by_discipline_id(self, d_id: int, year: int):
+        res = self.conn.execute(f"SELECT * FROM schedule s JOIN lectures l ON l.id_lect = s.id_lect WHERE l.id_disc = {d_id} AND s.date BETWEEN '{year}-01-01' AND '{year + 1}-01-01'")
+        #res = self.conn.execute("SELECT * FROM lectures WHERE id_disc = %s", (d_id,))
+        print(res)
         return res.fetchall()
     
     def get_cafedralic_lectures_by_group_name(self, name: str):

@@ -94,5 +94,5 @@ def lab3(
     except requests.exceptions.RequestException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Ошибка при запросе к listeners_count: {str(e)}"
+            detail=f"Ошибка при запросе к group_details: {str(e)}"
         )

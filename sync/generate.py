@@ -257,6 +257,7 @@ def generate_random_paragraph():
         noun = random.choice(fancy_nouns)
         adj = random.choice(adjectives)
 
+        #данной
         sentence = (
             f"В рамках данной части лекции {verb} {subject}, где особое внимание уделяется такому явлению, как {adj} {noun}. "
             f"Этот подход позволяет расширить представление о теме за счёт включения междисциплинарных связей и критического анализа."
