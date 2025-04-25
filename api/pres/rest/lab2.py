@@ -6,7 +6,6 @@ from app.students.usecases.listeners_count import listeners_count_usecase
 
 from starlette import status
 
-
 second_router = APIRouter()
 
 @second_router.get("/listeners_count")
