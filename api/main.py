@@ -6,6 +6,7 @@ from psycopg.rows import dict_row
 from neo4j import GraphDatabase
 import psycopg
 import time
+import os
 from pymongo import MongoClient
 from redis import Redis
 from elasticsearch import Elasticsearch
@@ -30,9 +31,15 @@ async def finalizer(app: FastAPI):
     app.state.redis_conn = Redis(**redis_conf)
     app.state.elastic_conn = Elasticsearch(f"http://{conf.elasticsearch.host}:{conf.elasticsearch.port}")
 
-    app.include_router(first_router, tags=["LAB 1"])
-    app.include_router(second_router, tags=["LAB 2"])
-    app.include_router(third_router, tags=["LAB 3"])
+
+    match str(os.getenv("LAB_NUM")):
+        case "1":
+            app.include_router(first_router, tags=["LAB 1"])
+        case "2":
+            app.include_router(second_router, tags=["LAB 2"])
+        case "3":
+            app.include_router(third_router, tags=["LAB 3"])
+
     yield
 
     connections = [

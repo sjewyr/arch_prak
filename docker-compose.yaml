@@ -87,19 +87,54 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
     depends_on:
-    - api
+    - api1
+    - api2
+    - api3
 
-  api:
+  api1:
     build:
       context: .
       dockerfile: Dockerfile.Api
-    container_name: api
+    container_name: api1
     ports:
       - "10000"
     volumes:
       - ./api:/api
     environment:
       - PYTHONUNBUFFERED=1
+      - LAB_NUM=1
+    restart: unless-stopped
+    depends_on:
+      - sync
+
+  api2:
+    build:
+      context: .
+      dockerfile: Dockerfile.Api
+    container_name: api2
+    ports:
+      - "10000"
+    volumes:
+      - ./api:/api
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LAB_NUM=2
+    restart: unless-stopped
+    depends_on:
+      - sync
+
+  api3:
+    build:
+      context: .
+      dockerfile: Dockerfile.Api
+    container_name: api3
+    ports:
+      - "10000"
+    volumes:
+      - ./api:/api
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LAB_NUM=3
     restart: unless-stopped
     depends_on:
       - sync

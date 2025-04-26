@@ -46,7 +46,7 @@ def lab1(
     }
     
     try:
-        response = requests.get(f"http://api:10000/least_attendance", params=params)
+        response = requests.get(f"http://api1:10000/least_attendance", params=params)
         response.raise_for_status()
         return JSONResponse(response.json(), status_code=200)
     except requests.exceptions.RequestException as e:
@@ -68,7 +68,7 @@ def lab2(
     }
 
     try:
-        response = requests.get(f"http://api:10000/listeners_count", params=params)
+        response = requests.get(f"http://api2:10000/listeners_count", params=params)
         response.raise_for_status()
         return JSONResponse(response.json(), status_code=200)
     except requests.exceptions.RequestException as e:
@@ -88,7 +88,7 @@ def lab3(
     }
 
     try:
-        response = requests.get(f"http://api:10000/group_details", params=params)
+        response = requests.get(f"http://api3:10000/group_details", params=params)
         response.raise_for_status()
         return JSONResponse(response.json(), status_code=200)
     except requests.exceptions.RequestException as e:

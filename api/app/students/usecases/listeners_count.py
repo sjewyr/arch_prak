@@ -13,6 +13,7 @@ def listeners_count_usecase(
 ):
     postgres_rep = PostgresRepo(postgres_conn)
     discipline = postgres_rep.get_discipline_by_name(name)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!", discipline)
     result = {"name": discipline["name"], "description": discipline["description"]}
     lectures = postgres_rep.get_lectures_by_discipline_id(discipline["id_disc"])
     
