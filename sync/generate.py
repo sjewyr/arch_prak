@@ -316,7 +316,7 @@ def main(
 ):
     try:
         load_data_mongo_db(conn, db_mongo)
-        time.sleep(3)
+        time.sleep(15)
         load_data_redis(conn, redis_conn)
         load_data_elasticsearch(conn, elastic_conn)
         load_data_neo4j(conn, neo_conn)
