@@ -53,7 +53,7 @@ services:
       - ./data/elasticsearch:/usr/share/elasticsearch/data
 
   postgresql:
-    image: debezium/postgres
+    image: debezium/postgres:17-alpine
     container_name: postgresql_container
     restart: on-failure
     environment:
