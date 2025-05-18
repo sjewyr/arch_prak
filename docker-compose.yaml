@@ -21,7 +21,31 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${SERVICE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${SERVICE_PASSWORD}
       MONGO_REPLICA_SET_NAME: rs0  # Добавлено для CDC
-    command: mongod --replSet rs0  # Активация replica set
+    command: 
+      - mongod
+      - --replSet
+      - rs0  # Имя Replica Set
+      - --bind_ip_all  # Разрешаем подключения с любого IP
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh admin --quiet
+      interval: 5s
+      timeout: 10s
+      retries: 5
+  mongo-init:
+    image: mongo:latest
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: on-failure
+    command: >
+      bash -c "
+        if ! mongosh --host mongodb_container --eval 'rs.status().ok' --quiet | grep -q 1; then
+          echo 'Initializing Replica Set...';
+          mongosh --host mongodb_container --eval 'rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"mongodb_container:27017\"}]})';
+        else
+          echo 'Replica Set already initialized';
+        fi
+      "
     
 
   neo4j:
