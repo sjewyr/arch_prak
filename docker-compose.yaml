@@ -20,12 +20,12 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${SERVICE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${SERVICE_PASSWORD}
-      MONGO_REPLICA_SET_NAME: rs0  # Добавлено для CDC
+      MONGO_REPLICA_SET_NAME: rs0 
     command: 
       - mongod
       - --replSet
-      - rs0  # Имя Replica Set
-      - --bind_ip_all  # Разрешаем подключения с любого IP
+      - rs0  
+      - --bind_ip_all 
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh admin --quiet
       interval: 5s
@@ -104,70 +104,70 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
   
 
-  gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile.Gateway
-    container_name: gateway
-    ports:
-      - "80:10000"
-    volumes:
-      - ./gateway:/gateway
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    depends_on:
-    - api1
-    - api2
-    - api3
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.Gateway
+  #   container_name: gateway
+  #   ports:
+  #     - "80:10000"
+  #   volumes:
+  #     - ./gateway:/gateway
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #   restart: unless-stopped
+  #   depends_on:
+  #   - api1
+  #   - api2
+  #   - api3
 
-  api1:
-    build:
-      context: .
-      dockerfile: Dockerfile.Api
-    container_name: api1
-    ports:
-      - "10000"
-    volumes:
-      - ./api:/api
-    environment:
-      - PYTHONUNBUFFERED=1
-      - LAB_NUM=1
-    restart: unless-stopped
-    depends_on:
-      - sync
+  # api1:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.Api
+  #   container_name: api1
+  #   ports:
+  #     - "10000"
+  #   volumes:
+  #     - ./api:/api
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #     - LAB_NUM=1
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - sync
 
-  api2:
-    build:
-      context: .
-      dockerfile: Dockerfile.Api
-    container_name: api2
-    ports:
-      - "10000"
-    volumes:
-      - ./api:/api
-    environment:
-      - PYTHONUNBUFFERED=1
-      - LAB_NUM=2
-    restart: unless-stopped
-    depends_on:
-      - sync
+  # api2:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.Api
+  #   container_name: api2
+  #   ports:
+  #     - "10000"
+  #   volumes:
+  #     - ./api:/api
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #     - LAB_NUM=2
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - sync
 
-  api3:
-    build:
-      context: .
-      dockerfile: Dockerfile.Api
-    container_name: api3
-    ports:
-      - "10000"
-    volumes:
-      - ./api:/api
-    environment:
-      - PYTHONUNBUFFERED=1
-      - LAB_NUM=3
-    restart: unless-stopped
-    depends_on:
-      - sync
+  # api3:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.Api
+  #   container_name: api3
+  #   ports:
+  #     - "10000"
+  #   volumes:
+  #     - ./api:/api
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #     - LAB_NUM=3
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - sync
       
   sync:
     build:
@@ -189,6 +189,8 @@ services:
       - redis
       - elasticsearch
       - mongodb
+
+    
   zookeeper:
       image: confluentinc/cp-zookeeper:7.4.1
       container_name: zookeeper
@@ -198,6 +200,8 @@ services:
         ZOOKEEPER_CLIENT_PORT: 2181
         ZOOKEEPER_TICK_TIME: 2000
       restart: unless-stopped
+
+
   kafka:
     image: confluentinc/cp-kafka:7.4.1
     container_name: kafka
@@ -215,6 +219,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     restart: unless-stopped
+
+
   schema-registry:
     image: confluentinc/cp-schema-registry:7.4.1
     container_name: schema-registry
@@ -226,6 +232,8 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
     restart: unless-stopped
+
+
   kafka-connect:
     image: confluentinc/cp-kafka-connect:7.4.1
     container_name: kafka-connect
@@ -252,6 +260,8 @@ services:
     volumes:
       - ./connectors:/usr/share/confluent-hub-components
     restart: unless-stopped
+
+    
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.4.1
     container_name: control-center

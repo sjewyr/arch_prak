@@ -327,7 +327,7 @@ def main(
 
 if __name__ == "__main__":
     conf = generate_conf()
-    time.sleep(5)
+    time.sleep(7)
     with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
         with pymongo.MongoClient(
             conf.mongo["host"], conf.mongo["port"]

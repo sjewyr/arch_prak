@@ -17,7 +17,7 @@ from pres.rest.lab3 import third_router
 @asynccontextmanager
 async def finalizer(app: FastAPI):
     neo4j_conf = conf.neo4j
-    time.sleep(5)
+    time.sleep(7)
     app.state.pg_conn = psycopg.connect(
         f"postgresql://{conf.postgres.user}:{conf.postgres.password}@{conf.postgres.host}:{conf.postgres.port}/{conf.postgres.database}",
         row_factory=dict_row,

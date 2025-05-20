@@ -14,7 +14,7 @@ if [ "$CREATE_DATA" == "1" ]; then
     psql -f /FINISH.sql -h postgresql_container -U postgres
     
     echo "Синхронизируем остальные хранилища с PostgreSQL..."
-    poetry run python generate.py
+    # poetry run python generate.py
 else
     echo "Данные синхронизировать не нужно, скипаюсь."
 fi
