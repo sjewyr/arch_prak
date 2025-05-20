@@ -10,7 +10,6 @@
     "topic.prefix": "postgres-server",
     "table.include.list": "public.*",
     "plugin.name": "pgoutput",
-    "slot.name": "debezium_slot",
     "publication.name": "debezium_pub",
     "database.history.kafka.bootstrap.servers": "kafka:9092",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",

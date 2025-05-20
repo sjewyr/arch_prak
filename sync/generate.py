@@ -327,7 +327,7 @@ def main(
 
 if __name__ == "__main__":
     conf = generate_conf()
-    time.sleep(7)
+    time.sleep(10)
     with psycopg.connect(conf.psql, row_factory=dict_row) as conn:
         with pymongo.MongoClient(
             conf.mongo["host"], conf.mongo["port"]
@@ -340,3 +340,23 @@ if __name__ == "__main__":
                     elastic_conn = Elasticsearch(f"http://{conf.elastic['host']}:{conf.elastic['port']}") 
                     db = mongo_client[conf.mongo.get("db")]
                     main(conn, neo_conn, db, redis_conn, elastic_conn)
+
+#проверка на наличие плагинов
+#  curl http://localhost:8083/connectors/elasticsearch-sink/status | jq
+#  curl http://localhost:8083/connectors/debezium-postgres-connector/status | jq
+
+
+#загрузка
+# curl -X POST -H "Content-Type: application/json" \
+#  --data @connectors/debezium-config.json \
+#  http://localhost:8083/connectors
+
+# curl -X POST -H "Content-Type: application/json" \
+#  --data @connectors/elastic-config.json \
+#  http://localhost:8083/connectors
+
+# проверка что данные появились и в elastic
+# curl -X GET "http://localhost:9200/postgres-server.public.presence/_search?q=id_pres:9281251&pretty"
+
+#      "topics": "postgres-server.public.presence",  
+#надо чето думать, потому что * не работает

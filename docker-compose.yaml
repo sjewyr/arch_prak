@@ -259,6 +259,13 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
     volumes:
       - ./connectors:/usr/share/confluent-hub-components
+    command:
+      - bash
+      - -c
+      - |
+        confluent-hub install --no-prompt debezium/debezium-connector-postgresql:2.1.4 && \
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:14.0.0 && \
+        /etc/confluent/docker/run
     restart: unless-stopped
 
     
