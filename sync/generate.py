@@ -367,3 +367,6 @@ if __name__ == "__main__":
 
 #      "topics": "postgres-server.public.presence",  
 #надо чето думать, потому что * не работает
+
+#удаление
+#curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
