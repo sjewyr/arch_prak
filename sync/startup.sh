@@ -10,7 +10,10 @@ if [ "$CREATE_DATA" == "1" ]; then
     
     export PGPASSWORD="postgres"
 
+    sleep 5
+
     echo "Применяем дамп к PostgreSQL..."
+
     psql -f /FINISH.sql -h postgresql_container -U postgres
     
     echo "Синхронизируем остальные хранилища с PostgreSQL..."

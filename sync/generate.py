@@ -316,7 +316,7 @@ def main(
 ):
     try:
         load_data_mongo_db(conn, db_mongo)
-        time.sleep(15)
+        time.sleep(10)
         load_data_redis(conn, redis_conn)
         load_data_elasticsearch(conn, elastic_conn)
         load_data_neo4j(conn, neo_conn)
@@ -369,7 +369,7 @@ if __name__ == "__main__":
 #надо чето думать, потому что * не работает
 
 #удаление
-#curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
+# curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
 
 #redis
 # docker exec -it redis_container redis-cli
