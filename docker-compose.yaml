@@ -94,7 +94,7 @@ services:
       - ./data/postgresql:/var/lib/postgresql/data 
 
   pgadmin:
-    image: elestio/pgadmin:latest
+    image: elestio/pgadmin:REL-9_2
     container_name: pgadmin
     restart: always
     ports:
@@ -102,7 +102,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
-  
 
   # gateway:
   #   build:
@@ -284,3 +283,40 @@ services:
       CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
     restart: unless-stopped
+
+  connector-setup:
+    image: curlimages/curl:7.87.0
+    container_name: connector-setup
+    depends_on:
+      - kafka-connect
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo 'Waiting for Kafka Connect to start...';
+        sleep 100;
+        echo "Checking Kafka Connect version...";
+        curl -v http://kafka-connect:8083/ | grep version;
+        echo "Registering PostgreSQL connector...";
+        curl -X POST http://kafka-connect:8083/connectors \
+          -H 'Content-Type: application/json' \
+          --data @/connectors/debezium-config.json \
+          -v;
+        sleep 5;
+        echo "Registering ElasticSearch connector...";
+        curl -X POST http://kafka-connect:8083/connectors \
+          -H 'Content-Type: application/json' \
+          --data @/connectors/elastic-config.json \
+          -v;
+        sleep 5;
+        echo "Registering Redis connector...";
+        curl -X POST http://kafka-connect:8083/connectors \
+          -H 'Content-Type: application/json' \
+          --data @/connectors/redis-config.json \
+          -v;
+        sleep 5;
+        echo "All Done!!!";
+    volumes:
+      - ./connectors/debezium-config.json:/connectors/debezium-config.json:ro
+      - ./connectors/elastic-config.json:/connectors/elastic-config.json:ro
+      - ./connectors/redis-config.json:/connectors/redis-config.json:ro

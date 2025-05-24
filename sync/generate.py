@@ -353,7 +353,7 @@ if __name__ == "__main__":
 #  http://localhost:8083/connectors
 
 
-#загрузка
+# загрузка
 # curl -X POST -H "Content-Type: application/json" \
 #  --data @connectors/redis-config.json \
 #  http://localhost:8083/connectors
@@ -363,10 +363,19 @@ if __name__ == "__main__":
 #  http://localhost:8083/connectors
 
 # проверка что данные появились и в elastic
-# curl -X GET "http://localhost:9200/postgres-server.public.presence/_search?q=id_pres:9281251&pretty"
+# curl -X GET "http://localhost:9200/postgres-domain.public.students/_search?q=id_stud:1263&pretty"
 
-#      "topics": "postgres-server.public.presence",  
+#      "topics": "postgres-domain.public.presence",  
 #надо чето думать, потому что * не работает
 
 #удаление
 #curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
+
+#redis
+# docker exec -it redis_container redis-cli
+
+#postgresql команды чтобы не тратить время
+# select * from students;
+
+# insert into students(id_group,name,studak,age) values (3, 'test user', 123456, 43)
+# delete from students where id_stud=1263
