@@ -6,7 +6,7 @@
       "topics": "postgres-domain.public.students",
       "connect.redis.host": "redis_container",
       "connect.redis.port": "6379",
-      "connect.redis.kcql": "SELECT id_group, name, studak, age FROM postgres-domain.public.students PK id_stud",
+      "connect.redis.kcql": "SELECT after.id_group, after.name, after.studak, after.age FROM postgres-domain.public.students PK after.id",
       "value.converter": "org.apache.kafka.connect.storage.StringConverter",
       "key.converter": "org.apache.kafka.connect.storage.StringConverter",
       "redis.type": "JSON",

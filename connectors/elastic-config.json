@@ -3,26 +3,28 @@
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
+    "topics": "postgres-domain.public.students",
+    "connection.url": "http://elasticsearch:9200",
+    "type.name": "_doc",
+    "key.ignore": "false",
+    "schema.ignore": "true",
     
-    "topics.regex": "postgres-domain\\.public\\..*",
-    "key.ignore": "true", 
-    "connection.url": "http://elasticsearch:9200", 
+    "transforms": "unwrap,extractId",
     
-    "type.name": "_doc", 
-    "behavior.on.null.values": "delete",
-    "behavior.on.malformed.documents": "warn",  
-    
-    "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
-    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
     
+    "transforms.extractId.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractId.field": "id",
+    
+    "pk.mode": "record_key",
+    "pk.fields": "id",
+    
+    "behavior.on.null.values": "delete",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
-    "value.converter.schemas.enable": "false",
-
-    "schema.ignore": "true", 
-    "write.method": "upsert", 
-    "index.write.wait.for.active.shards": "1" 
+    "value.converter.schemas.enable": "false"
   }
 }

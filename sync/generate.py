@@ -342,18 +342,18 @@ if __name__ == "__main__":
                     main(conn, neo_conn, db, redis_conn, elastic_conn)
 
 #проверка на наличие плагинов
-#  curl http://localhost:8083/connectors/elasticsearch-sink/status | jq
-#  curl http://localhost:8083/connectors/debezium-postgres-connector/status | jq
-#  curl http://localhost:8083/connectors/redis/status | jq
+# curl http://localhost:8083/connectors/elasticsearch-sink/status | jq
+# curl http://localhost:8083/connectors/debezium-postgres-connector/status | jq
+# curl http://localhost:8083/connectors/redis/status | jq
 
 
-#загрузка
+# загрузка
 # curl -X POST -H "Content-Type: application/json" \
 #  --data @connectors/debezium-config.json \
 #  http://localhost:8083/connectors
 
 
-# загрузка
+# # загрузка
 # curl -X POST -H "Content-Type: application/json" \
 #  --data @connectors/redis-config.json \
 #  http://localhost:8083/connectors
@@ -364,6 +364,7 @@ if __name__ == "__main__":
 
 # проверка что данные появились и в elastic
 # curl -X GET "http://localhost:9200/postgres-domain.public.students/_search?q=id_stud:1263&pretty"
+# curl -X GET "http://localhost:9200/postgres-domain.public.students/_search?q=_id:1269&pretty"
 
 #      "topics": "postgres-domain.public.presence",  
 #надо чето думать, потому что * не работает
@@ -379,3 +380,59 @@ if __name__ == "__main__":
 
 # insert into students(id_group,name,studak,age) values (3, 'test user', 123456, 43)
 # delete from students where id_stud=1263
+
+
+
+
+# insert into students(id_group,name,studak,age) values (3, 'test 12312', 123456, 43)
+
+# select * from students
+
+# UPDATE students
+# SET 
+#     name = 'maksim urauraura', 
+#     studak = 'goyda', 
+#     age = 124
+# WHERE id = 1275;  
+
+# delete from students where id = 1275
+
+# SELECT relreplident FROM pg_class WHERE relname = 'students';
+
+# ALTER TABLE students REPLICA IDENTITY FULL;
+
+
+
+# curl -X GET "http://localhost:9200/postgres-domain.public.students/_doc/1275?pretty"
+
+#рабочее
+# {
+#   "name": "elasticsearch-sink",
+#   "config": {
+#     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+#     "tasks.max": "1",
+#     "topics": "postgres-domain.public.students",
+#     "connection.url": "http://elasticsearch:9200",
+#     "type.name": "_doc",
+#     "key.ignore": "false",
+#     "schema.ignore": "true",
+    
+#     "transforms": "unwrap,extractId",
+    
+#     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+#     "transforms.unwrap.drop.tombstones": "false",
+#     "transforms.unwrap.delete.handling.mode": "rewrite",
+    
+#     "transforms.extractId.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+#     "transforms.extractId.field": "id",
+    
+#     "pk.mode": "record_key",
+#     "pk.fields": "id",
+    
+#     "behavior.on.null.values": "delete",
+#     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+#     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+#     "key.converter.schemas.enable": "false",
+#     "value.converter.schemas.enable": "false"
+#   }
+# }
