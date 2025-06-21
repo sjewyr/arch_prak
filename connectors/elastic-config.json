@@ -3,7 +3,7 @@
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
-    "topics": "postgres-domain.public.students",
+    "topics": "postgres-domain.public.departments,postgres-domain.public.disciplines,postgres-domain.public.groups,postgres-domain.public.institutes,postgres-domain.public.lecture_text,postgres-domain.public.lectures,postgres-domain.public.presence,postgres-domain.public.schedule,postgres-domain.public.speciality,postgres-domain.public.students,postgres-domain.public.universities",
     "connection.url": "http://elasticsearch:9200",
     "type.name": "_doc",
     "key.ignore": "false",
